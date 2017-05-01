@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# send the repo name to the clipboard and notifications
+cd ~/sites/grading/
+cat user.txt | terminal-notifier -sound default
+cat user.txt | pbcopy
+
+# remove the old database
+/usr/local/bin/mysql --host=localhost -uroot -proot --force --execute="drop database app;"
+
+# clean up files
+rm -rf ~/sites/grading/tmp
+rm -f user.txt
+rm -f database.txt
+
+if [ "$1" != "no" ]; then
+  open /path/to/gradesfile.csv
+else
+  echo "Not showing grading sheet."
+fi

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# clone the repository
+repo="https://github.com/$1"
+
+# open the repo in a browser
+open https://github.com/$1
+
+# clone the repository
+mkdir -p ~/sites/grading && cd ~/sites/grading
+git clone $repo tmp
+
+# store username/repo
+echo $1 > user.txt
+
+# setup laravel database env
+cp env tmp/.env
+
+# cd into the repo
+cd tmp
+
+# create the database
+/usr/local/bin/mysql --host=localhost -uroot -proot --force --execute="create database app;"
+
+# install dependencies
+composer install
+npm install
+npm run dev
+git log
+php artisan key:generate
+php artisan config:clear
+php artisan config:cache
+php artisan migrate
+
+# run the application
+open http://grading.dev/
